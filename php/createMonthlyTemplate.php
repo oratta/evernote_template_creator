@@ -62,25 +62,27 @@ $tenYearthString = "";
 
 //TODO 月ごとの出力配列を作成
 $tag = "monthly";
-$monthlyString = "";
-$monthlyString .= '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export.dtd">';
-$monthlyString .= '<en-export export-date="'.$dateTime.'" application="'.$application.'" version="'.$evernoteVersion.'}">';
+
+$content = "";
 for($i=1;$i<13;$i++){
 	$title = "{$year}年{$i}月";
-	$monthlyString .= '<note><title>'.$title.'</title><content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>';
-	$monthlyString .= '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-	$monthlyString .= '<en-note style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space; ">'.$title;
-	$monthlyString .= '<div>*************************目標****************************</div>';
-	$monthlyString .= '<div>*************************スケジュール****************************</div>';
-	$monthlyString .= '<div>*************************TODO**********************</div>';
-	$monthlyString .= '<div>*************************レビュー**********************</div>';
-	$monthlyString .= '</en-note>]]></content><created>'.date("Ymd\THis\Z", mktime(1,0,0,$i,1,$year)).'</created><updated>'.$dateTime.'</updated><tag>'.$tag.'</tag><note-attributes/></note>';
+	$createDate = date("Ymd\THis\Z", mktime(1,0,0,$i,1,$year));
+
+	$noteTemplate = file_get_contents("../template/monthly_note.xml");
+	$noteTemplate = preg_replace("/\[%TITLE%\]/", $title, $noteTemplate);
+	$noteTemplate = preg_replace("/\[%CREATE_DATE%\]/", $createDate, $noteTemplate);
+	$content .= $noteTemplate;
 }
-$monthlyString .= '</en-export>';
-echo "monthly\n<br>";
-echo $monthlyString;
+$monthlyTemplate = file_get_contents("../template/monthly.xml");
+$monthlyTemplate = preg_replace("/\[%CONTENTS%\]/", $content, $monthlyTemplate);
+$monthlyTemplate = preg_replace("/\[%DATE_TIME%\]/", $dateTime, $monthlyTemplate);
+$monthlyTemplate = preg_replace("/\[%APPLICATION%\]/", $application, $monthlyTemplate);
+$monthlyTemplate = preg_replace("/\[%EVERNOTE_VERSION%\]/", $evernoteVersion, $monthlyTemplate);
+$monthlyTemplate = preg_replace("/\[%TAG%\]/", $tag, $monthlyTemplate);
+
+
 $fp = fopen($outputDir.'/monthly.enex', 'w');
-fwrite($fp, $monthlyString);
+fwrite($fp, $monthlyTemplate);
 fclose($fp);
 
 //TODO 週ごとの出力配列を作成
