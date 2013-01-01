@@ -73,7 +73,7 @@ for($i=1;$i<13;$i++){
 	$noteTemplate = preg_replace("/\[%CREATE_DATE%\]/", $createDate, $noteTemplate);
 	$content .= $noteTemplate;
 }
-$monthlyTemplate = file_get_contents("../template/monthly.xml");
+$monthlyTemplate = file_get_contents("../template/layout.xml");
 $monthlyTemplate = preg_replace("/\[%CONTENTS%\]/", $content, $monthlyTemplate);
 $monthlyTemplate = preg_replace("/\[%DATE_TIME%\]/", $dateTime, $monthlyTemplate);
 $monthlyTemplate = preg_replace("/\[%APPLICATION%\]/", $application, $monthlyTemplate);
@@ -85,7 +85,6 @@ $fp = fopen($outputDir.'/monthly.enex', 'w');
 fwrite($fp, $monthlyTemplate);
 fclose($fp);
 
-//TODO 週ごとの出力配列を作成
 $month = date("m", $_SERVER["REQUEST_TIME"]);
 //年の最初の週の最初の日を求める
 for($i=1;$i<8;$i++){
