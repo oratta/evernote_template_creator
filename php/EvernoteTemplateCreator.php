@@ -35,8 +35,8 @@ class EvernoteTemplateCreator
 
 	private function createTemplate(array $typeArray)
 	{
-		$application = "Evernote/Windows";
-		$evernoteVersion = "4.x";
+		$application = "Evernote";
+		$evernoteVersion = "Evernote Mac 5.4.4 (402231)";
 		$dateTime = date("Ymd\THis\Z", $_SERVER["REQUEST_TIME"]);
 		$year = date("Y", $_SERVER["REQUEST_TIME"]);
 		$month = date("m", $_SERVER["REQUEST_TIME"]);
@@ -88,6 +88,8 @@ class EvernoteTemplateCreator
 				$firstDay = null;
 				for($i=1;$i<8;$i++){
 					$firstDay = mktime(1,0,0,1,$i,$year);
+					//
+// 					$firstWeekendDay = mktime(1,0,0,1,$i +date("");
 					$weekDay = date("W//w",$firstDay);
 					if($weekDay==="01//1")break;
 				}
