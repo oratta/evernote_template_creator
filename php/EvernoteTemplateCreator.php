@@ -86,17 +86,12 @@ class EvernoteTemplateCreator
 
 			case self::TYPE_WEEKLY :
 				$firstDay = null;
-				for($i=1;$i<8;$i++){
-					$firstDay = mktime(1,0,0,1,$i,$year);
-					//
-// 					$firstWeekendDay = mktime(1,0,0,1,$i +date("");
-					$weekDay = date("W//w",$firstDay);
-					if($weekDay==="01//1")break;
-				}
-
+				$firstDay = mktime(1,0,0,1,1,$year); //初日の1時
+				$firstWeekDay = date("N", $firstDay);//最初の週の曜日 月:1 - 日:7
+				$firstDay = mktime(1,0,0,1,2-$firstWeekDay,$year); //最初の週の月曜日
 				for ($w=1;$w<54;$w++){
-					$firstDayOfTheWeek = mktime(1,0,0,1,($w-1)*7+intval(date("d",$firstDay)));
-					$lastDayOfTheWeek = mktime(1,0,0,1,($w-1)*7+intval(date("d",$firstDay))+6);
+					$firstDayOfTheWeek = $this->dateAdd($firstDay, ($w-1)*7);
+					$lastDayOfTheWeek = $this->dateAdd($firstDay, ($w-1)*7 + 6);
 					$title = "{$year}年 第{$w}週(" . date('m/d',$firstDayOfTheWeek) . "月-" . date('m/d',$lastDayOfTheWeek) . "日)";
 					$createDate = date("Ymd\THis\Z", $firstDayOfTheWeek);
 
@@ -122,6 +117,13 @@ class EvernoteTemplateCreator
 		}
 
 		return $content;
+	}
+
+	private function dateAdd($time , $addDay)
+	{
+		$dateStrign = date("Y-m-d", $time);
+		$vector = $addDay > 0 ? "+" : "-";
+		return strtotime("{$dateStrign} {$vector}{$addDay} day");
 	}
 
 	private function replaceNoteTemplate($noteTemplate, array $replaceArray)
